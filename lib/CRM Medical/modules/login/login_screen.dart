@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Center(
                 child: defaultText(
-                  text: 'Log In',
+                  text: 'Log In App CRM',
                   fontSize: 30,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
