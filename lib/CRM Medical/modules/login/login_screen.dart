@@ -9,7 +9,16 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   var formKey = GlobalKey<FormState>();
+  bool isPassword = true;
+
+  @override
+  void dispose() {
+    loginController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,59 +26,82 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Form(
+          key: formKey,
           child: Column(
-            key: formKey,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(child: defaultText(text:'Log In',fontSize: 30,color: Colors.black,fontWeight: FontWeight.bold)),
-              defaultSizedBox(),
-              defaultFormField(controller: loginController, type: TextInputType.emailAddress, label: 'Email Address', prefix: Icons.email,  validator: (value)
-              {
-                if(value!.isEmpty)
-                {
-                  return 'Email must be not empty';
-                }
-                else
-                {
-                  return null;
-                }
-              }
+              Center(
+                child: defaultText(
+                  text: 'Log In',
+                  fontSize: 30,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               defaultSizedBox(),
-              defaultFormField(controller: passwordController, isPassword : true, type: TextInputType.visiblePassword, label: 'Password', prefix: Icons.lock, suffix: Icons.remove_red_eye, validator: (value)
-              {
-                if(value!.isEmpty){
-                  return 'Password must be not empty';
-                }
-                else{
+
+              defaultFormField(
+                controller: loginController,
+                type: TextInputType.emailAddress,
+                label: 'Email Address',
+                prefix: Icons.email,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Email must not be empty';
+                  }
                   return null;
-                }
-              }),
+                },
+              ),
+
               defaultSizedBox(),
-              defaultButton(function: (){
-              }, text: 'Log In'),
+
+              defaultFormField(
+                controller: passwordController,
+                type: TextInputType.visiblePassword,
+                label: 'Password',
+                prefix: Icons.lock,
+                isPassword: isPassword,
+                suffix: isPassword ? Icons.visibility : Icons.visibility_off,
+                suffixPressed: () {
+                  setState(() {
+                    isPassword = !isPassword;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password must not be empty';
+                  }
+                  return null;
+                },
+              ),
+
               defaultSizedBox(),
+
+              defaultButton(
+                text: 'Log In',
+                function: () {
+                  if (formKey.currentState!.validate()) {
+                    print('Email: ${loginController.text}');
+                    print('Password: ${passwordController.text}');
+                  }
+                },
+              ),
+
+              defaultSizedBox(),
+
               Row(
                 children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 1,
-                    ),
-                  ),
+                  const Expanded(child: Divider(thickness: 1)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: defaultTextButton(
                       text: 'Forget your password',
                       onPressed: () {
-                        print('hello');
+                        print('Forget password clicked');
                       },
                     ),
                   ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 1,
-                    ),
-                  ),
+                  const Expanded(child: Divider(thickness: 1)),
                 ],
               ),
             ],

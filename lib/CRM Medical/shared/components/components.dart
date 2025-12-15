@@ -36,22 +36,29 @@ Widget defaultFormField({
   required IconData prefix,
   IconData? suffix,
   Function()? suffixPressed,
-}) =>
-    TextFormField(
-      controller: controller,
-      keyboardType: type,
-      onChanged: onChange,
-      onFieldSubmitted: onSubmit,
-      onTap: onTap,
-      obscureText: isPassword,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(prefix),
-        suffixIcon: Icon(suffix),
-        border: const OutlineInputBorder(),
-      ),
-    );
+}) {
+  return TextFormField(
+    controller: controller,
+    keyboardType: type,
+    onChanged: onChange,
+    onFieldSubmitted: onSubmit,
+    onTap: onTap,
+    obscureText: isPassword,
+    validator: validator,
+    decoration: InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(prefix),
+      suffixIcon: suffix != null
+          ? IconButton(
+        icon: Icon(suffix),
+        onPressed: suffixPressed,
+      )
+          : null,
+      border: const OutlineInputBorder(),
+    ),
+  );
+}
+
 /************************************************/
 Widget defaultButton({
   double width = double.infinity,
