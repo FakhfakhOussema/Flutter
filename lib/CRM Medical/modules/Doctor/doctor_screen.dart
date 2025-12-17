@@ -84,6 +84,10 @@ class _DoctorScreenState extends State<DoctorScreen> {
                   _nameController.clear();
                   _specialtyController.clear();
                 },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 child: const Text('Ajouter'),
               ),
             ],
