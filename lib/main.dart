@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "CRM App",
       routes: routes,
-      // Dans votre build MaterialApp...
-      home: StreamBuilder<User?>(
+      home: LoginScreen(),
+      /*/home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, authSnapshot) {
           if (authSnapshot.connectionState == ConnectionState.waiting) {
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
             return const FaceVerificationScreen(); // Doit prouver qu'il est humain
           }
         },
-      ),
+      ),*/
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:app_examen/CRM%20Medical/modules/Meeting/meeting_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../layout/appBar.dart';
 import '../../layout/bottomNavBar.dart';
@@ -39,11 +40,60 @@ class _MeetingDoneState extends State<MeetingDone> {
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: customAppBar(title: 'Completed Meetings'),
-      body: const Center(
-        child: Text(
-          'Meeting Done',
-          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-        ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('meetings')
+            .where('status', isEqualTo: 1)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text(
+                'Aucun rendez-vous terminé',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final doc = snapshot.data!.docs[index];
+              final date = (doc['date'] as Timestamp).toDate();
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.check_circle, color: Colors.green),
+                  title: Text(
+                    doc['doctor'],
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    'Date : ${date.day}/${date.month}/${date.year}',
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.archive, color: Colors.grey),
+                    onPressed: () {
+                      FirebaseFirestore.instance
+                          .collection('meetings')
+                          .doc(doc.id)
+                          .update({'status': 2});
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
