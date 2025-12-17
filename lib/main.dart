@@ -6,7 +6,6 @@ import 'package:app_examen/CRM%20Medical/modules/seetings/seeting_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'CRM Medical/modules/login/login_screen.dart';
 import 'CRM Medical/modules/MLKit/face_verification/face_verification_screen.dart';
 import 'firebase_options.dart';
@@ -45,7 +44,6 @@ class MyApp extends StatelessWidget {
           if (authSnapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(body: Center(child: CircularProgressIndicator()));
           }
-
           if (authSnapshot.hasData) {
             return HomeScreen(); // Déjà connecté
           } else {
