@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -48,11 +49,17 @@ class AppDrawer extends StatelessWidget {
             icon: Icons.settings_outlined,
             route: '/settings',
           ),
-          drawerItem(
-            context,
-            title: 'Deconnexion',
-            icon: Icons.logout,
-            route: '/deconnexion',
+          ListTile(
+            title: const Text('Déconnexion', style: TextStyle(fontSize: 22)),
+            leading: const Icon(Icons.logout, color: Colors.blue),
+            trailing: const Icon(Icons.arrow_right, color: Colors.blue),
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login', (route) => false,
+              );
+            },
           ),
         ],
       ),

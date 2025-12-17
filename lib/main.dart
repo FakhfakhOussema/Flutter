@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   final routes={
     '/medication':(context) => MedicationScreen(),
     '/home':(context) => HomeScreen(),
+    '/login':(context) => LoginScreen(),
   };
   @override
   Widget build(BuildContext context) {
