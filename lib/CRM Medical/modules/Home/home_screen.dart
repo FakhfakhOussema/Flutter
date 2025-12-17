@@ -1,9 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../layout/appBar.dart';
 import '../../layout/drawer.dart';
+import '../Meeting/meeting_archived.dart';
+import '../Meeting/meeting_done.dart';
+import '../Meeting/meeting_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  /// Compter les documents d'une collection ou avec filtre
+  Stream<int>? _countDocuments(String collection, {Map<String, dynamic>? where}) {
+    Stream<QuerySnapshot>? stream;
+    if (where != null) {
+      where.forEach((key, value) {
+        stream = FirebaseFirestore.instance
+            .collection(collection)
+            .where(key, isEqualTo: value)
+            .snapshots();
+      });
+    } else {
+      stream = FirebaseFirestore.instance.collection(collection).snapshots();
+    }
+    return stream?.map((snap) => snap.size);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,69 +35,125 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome text
             const Text(
-              'Bienvenue 👋',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              'Bienvenue',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             const Text(
               'Gérez facilement vos rendez-vous médicaux',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-
             const SizedBox(height: 25),
 
-            // Stat Cards
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              children: const [
-                _StatCard(
-                  title: 'Meetings',
-                  value: '12',
-                  icon: Icons.calendar_today,
-                  color: Colors.blue,
-                ),
-                _StatCard(
-                  title: 'Doctors',
-                  value: '5',
-                  icon: Icons.medical_services,
-                  color: Colors.green,
-                ),
-                _StatCard(
-                  title: 'Completed',
-                  value: '8',
-                  icon: Icons.check_circle,
-                  color: Colors.orange,
-                ),
-                _StatCard(
-                  title: 'Archived',
-                  value: '3',
-                  icon: Icons.archive,
-                  color: Colors.grey,
-                ),
-              ],
+            // Stat Cards dynamiques
+            StreamBuilder<int>(
+              stream: FirebaseFirestore.instance
+                  .collection('meetings')
+                  .snapshots()
+                  .map((snap) => snap.size),
+              builder: (context, snapshot) {
+                final meetingsCount = snapshot.data ?? 0;
+                return GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  children: [
+                    _StatCard(
+                      title: 'All Meetings',
+                      value: meetingsCount.toString(),
+                      icon: Icons.calendar_today,
+                      color: Colors.blue,
+                    ),
+                    StreamBuilder<int>(
+                      stream: FirebaseFirestore.instance
+                          .collection('meetings')
+                          .where('status', isEqualTo: 0) // status = 0 => Scheduled / Meetings
+                          .snapshots()
+                          .map((snap) => snap.size),
+                      builder: (context, snapScheduled) {
+                        final scheduledCount = snapScheduled.data ?? 0;
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MeetingScreen()),
+                            );
+                          },
+                          child: _StatCard(
+                            title: 'Scheduled',
+                            value: scheduledCount.toString(),
+                            icon: Icons.schedule, // icône pour Meetings
+                            color: Colors.blue,
+                          ),
+                        );
+                      },
+                    ),
+                    StreamBuilder<int>(
+                      stream: FirebaseFirestore.instance
+                          .collection('meetings')
+                          .where('status', isEqualTo: 1) // status = 1 => Done
+                          .snapshots()
+                          .map((snap) => snap.size),
+                      builder: (context, snapDone) {
+                        final doneCount = snapDone.data ?? 0;
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MeetingDone()),
+                            );
+                          },
+                          child: _StatCard(
+                            title: 'Done',
+                            value: doneCount.toString(),
+                            icon: Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                        );
+                      },
+                    ),
+                    StreamBuilder<int>(
+                      stream: FirebaseFirestore.instance
+                          .collection('meetings')
+                          .where('status', isEqualTo: 2) // status = 2 => Archived
+                          .snapshots()
+                          .map((snap) => snap.size),
+                      builder: (context, snapArchived) {
+                        final archivedCount = snapArchived.data ?? 0;
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MeetingArchived()),
+                            );
+                          },
+                          child: _StatCard(
+                            title: 'Archived',
+                            value: archivedCount.toString(),
+                            icon: Icons.archive,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
+
+
+
+                  ],
+                );
+              },
             ),
 
             const SizedBox(height: 25),
 
-            // Quick Actions
             const Text(
               'Actions rapides',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -85,48 +161,55 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.add,
                   label: 'Nouveau RDV',
                   color: Colors.blue,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/meeting');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/meeting'),
                 ),
                 _ActionButton(
                   icon: Icons.person_add,
                   label: 'Docteur',
                   color: Colors.green,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/doctors');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/doctors'),
                 ),
                 _ActionButton(
                   icon: Icons.medication,
                   label: 'Médicament',
                   color: Colors.orange,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/Medication');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/Medication'),
                 ),
               ],
             ),
 
             const SizedBox(height: 25),
-
-            // Recent meetings
             const Text(
               'Derniers rendez-vous',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
-            _RecentMeetingTile(
-              doctor: 'Dr. Ahmed',
-              date: '12/01/2025',
-            ),
-            _RecentMeetingTile(
-              doctor: 'Dr. Salma',
-              date: '10/01/2025',
+            // Liste des derniers meetings (status = 0 ou active)
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('meetings')
+                  .where('status', isEqualTo: 0)
+                  .orderBy('date', descending: true)
+                  .limit(5)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('Aucun rendez-vous récent'));
+                }
+
+                return Column(
+                  children: snapshot.data!.docs.map((doc) {
+                    final Timestamp ts = doc['date'];
+                    final DateTime date = ts.toDate();
+                    return _RecentMeetingTile(
+                      doctor: doc['doctor'],
+                      date:
+                      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}',
+                    );
+                  }).toList(),
+                );
+              },
             ),
           ],
         ),
@@ -134,7 +217,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _StatCard extends StatelessWidget {
   final String title;
@@ -163,15 +245,9 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            Text(
-              title,
-              style: const TextStyle(color: Colors.grey),
-            ),
+            Text(title, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),
@@ -211,7 +287,6 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-
 class _RecentMeetingTile extends StatelessWidget {
   final String doctor;
   final String date;
@@ -234,7 +309,3 @@ class _RecentMeetingTile extends StatelessWidget {
     );
   }
 }
-
-
-
-
