@@ -40,7 +40,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Nom du médicament
+              // Nom médicament
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -51,7 +51,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Code-barres (scan QR)
+              // Code-barres
               TextField(
                 controller: _barcodeController,
                 readOnly: true,
@@ -77,7 +77,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Quantité
+              // Quantité
               TextField(
                 controller: _quantityController,
                 keyboardType: TextInputType.number,
@@ -89,7 +89,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Bouton Ajouter
               ElevatedButton(
                 onPressed: () async {
                   if (_nameController.text.isEmpty || _quantityController.text.isEmpty) {
@@ -123,6 +122,43 @@ class _MedicationScreenState extends State<MedicationScreen> {
         );
       },
     );
+  }
+
+  /// Scanner un code QR pour rechercher un médicament
+  void _searchMedicationByBarcode() async {
+    final barcode = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const BarcodeScannerView()),
+    );
+
+    if (barcode != null) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('medications')
+          .where('barcode', isEqualTo: barcode)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final doc = snapshot.docs.first;
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(doc['name']),
+            content: Text('Quantité : ${doc['quantity']}\nCode-barres : ${doc['barcode']}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Fermer'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Médicament non trouvé')),
+        );
+      }
+    }
   }
 
   @override
@@ -188,10 +224,26 @@ class _MedicationScreenState extends State<MedicationScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddMedicationModal(context),
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.add, color: Colors.white),
+
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: 'add',
+            onPressed: () => _showAddMedicationModal(context),
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.add, color: Colors.white),
+            tooltip: 'Ajouter un médicament',
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'search',
+            onPressed: _searchMedicationByBarcode,
+            backgroundColor: Colors.orange,
+            child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+            tooltip: 'Rechercher par code-barres',
+          ),
+        ],
       ),
     );
   }
