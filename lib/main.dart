@@ -1,3 +1,4 @@
+import 'package:app_examen/CRM%20Medical/modules/Doctor/doctor_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/Home/home_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/medication/medication_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     '/medication':(context) => MedicationScreen(),
     '/home':(context) => HomeScreen(),
     '/login':(context) => LoginScreen(),
+    '/doctors':(context) => DoctorScreen(),
   };
   @override
   Widget build(BuildContext context) {

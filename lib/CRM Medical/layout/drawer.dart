@@ -6,6 +6,8 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -16,12 +18,24 @@ class AppDrawer extends StatelessWidget {
                 colors: [Colors.blue, Colors.lightBlue],
               ),
             ),
-            child: const Center(
-              child: CircleAvatar(
-                radius: 40,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 50, color: Colors.blue),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 50, color: Colors.blue),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  user?.email ?? 'Utilisateur',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -50,14 +64,15 @@ class AppDrawer extends StatelessWidget {
             route: '/settings',
           ),
           ListTile(
-            title: const Text('Déconnexion', style: TextStyle(fontSize: 22)),
+            title: const Text('Déconnexion', style: TextStyle(fontSize: 18)),
             leading: const Icon(Icons.logout, color: Colors.blue),
             trailing: const Icon(Icons.arrow_right, color: Colors.blue),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                '/login', (route) => false,
+                '/login',
+                    (route) => false,
               );
             },
           ),
