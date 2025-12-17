@@ -1,4 +1,5 @@
 import 'package:app_examen/CRM%20Medical/modules/Home/home_screen.dart';
+import 'package:app_examen/CRM%20Medical/modules/medication/medication_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +9,21 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
 
+  final routes={
+    '/medication':(context) => MedicationScreen(),
+    '/home':(context) => HomeScreen(),
+  };
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      routes: routes,
       title: "CRM App",
       home: FutureBuilder(
         future: Firebase.initializeApp(
