@@ -24,87 +24,96 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: defaultText(
-                  text: 'Log In App CRM',
-                  fontSize: 30,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              defaultSizedBox(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Center(
+            child: SingleChildScrollView(
+              reverse: true, // fait remonter le formulaire quand le clavier s'ouvre
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Titre
+                    Center(
+                      child: defaultText(
+                        text: 'Log In App CRM',
+                        fontSize: 30,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    defaultSizedBox(),
 
-              defaultFormField(
-                controller: loginController,
-                type: TextInputType.emailAddress,
-                label: 'Email Address',
-                prefix: Icons.email,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Email must not be empty';
-                  }
-                  return null;
-                },
-              ),
-
-              defaultSizedBox(),
-
-              defaultFormField(
-                controller: passwordController,
-                type: TextInputType.visiblePassword,
-                label: 'Password',
-                prefix: Icons.lock,
-                isPassword: isPassword,
-                suffix: isPassword ? Icons.visibility : Icons.visibility_off,
-                suffixPressed: () {
-                  setState(() {
-                    isPassword = !isPassword;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Password must not be empty';
-                  }
-                  return null;
-                },
-              ),
-
-              defaultSizedBox(),
-
-              defaultButton(
-                text: 'Log In',
-                function: () {
-                  if (formKey.currentState!.validate()) {
-                      _onAuthentifier(context);
-                  }
-                },
-              ),
-
-              defaultSizedBox(),
-
-              Row(
-                children: [
-                  const Expanded(child: Divider(thickness: 1)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: defaultTextButton(
-                      text: 'Forget your password',
-                      onPressed: () {
-                        print('Forget password clicked');
+                    // Email
+                    defaultFormField(
+                      controller: loginController,
+                      type: TextInputType.emailAddress,
+                      label: 'Email Address',
+                      prefix: Icons.email,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email must not be empty';
+                        }
+                        return null;
                       },
                     ),
-                  ),
-                  const Expanded(child: Divider(thickness: 1)),
-                ],
+                    defaultSizedBox(),
+
+                    // Password
+                    defaultFormField(
+                      controller: passwordController,
+                      type: TextInputType.visiblePassword,
+                      label: 'Password',
+                      prefix: Icons.lock,
+                      isPassword: isPassword,
+                      suffix: isPassword ? Icons.visibility : Icons.visibility_off,
+                      suffixPressed: () {
+                        setState(() {
+                          isPassword = !isPassword;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password must not be empty';
+                        }
+                        return null;
+                      },
+                    ),
+                    defaultSizedBox(),
+
+                    // Login button
+                    defaultButton(
+                      text: 'Log In',
+                      function: () {
+                        if (formKey.currentState!.validate()) {
+                          _onAuthentifier(context);
+                        }
+                      },
+                    ),
+                    defaultSizedBox(),
+
+                    // Forget password
+                    Row(
+                      children: [
+                        const Expanded(child: Divider(thickness: 1)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: defaultTextButton(
+                            text: 'Forget your password',
+                            onPressed: () {
+                              print('Forget password clicked');
+                            },
+                          ),
+                        ),
+                        const Expanded(child: Divider(thickness: 1)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -131,25 +140,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       switch (e.code) {
         case 'user-not-found':
-          message = 'Email or password is incorrect';
-          break;
-
         case 'wrong-password':
           message = 'Email or password is incorrect';
           break;
-
         case 'invalid-email':
           message = 'Invalid email address';
           break;
-
         case 'user-disabled':
           message = 'This account has been disabled';
           break;
-
         case 'too-many-requests':
           message = 'Too many attempts. Try again later';
           break;
-
         default:
           message = 'Authentication failed. Please try again';
       }
@@ -159,6 +161,4 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
-
-
 }
