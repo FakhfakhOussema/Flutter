@@ -5,22 +5,13 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'face_verification_service.dart';
 
-enum FaceVerificationStatus {
-  idle,
-  scanning,
-  success,
-  failed,
-}
+enum FaceStatus { idle, scanning, success }
 
 class FaceVerificationController extends ChangeNotifier {
   final FaceVerificationService service;
-
   CameraController? cameraController;
-  FaceVerificationStatus status = FaceVerificationStatus.idle;
-  String message = 'Appuyez pour commencer la vérification';
-
-  int attempts = 0;
-  final int maxAttempts = 3;
+  FaceStatus status = FaceStatus.idle;
+  String message = 'Place your face in front of the camera';
   bool _isProcessing = false;
 
   FaceVerificationController(this.service);
@@ -28,58 +19,45 @@ class FaceVerificationController extends ChangeNotifier {
   Future<void> initializeCamera() async {
     final cameras = await availableCameras();
     cameraController = CameraController(
-      cameras.firstWhere(
-            (c) => c.lensDirection == CameraLensDirection.front,
-      ),
-      ResolutionPreset.medium,
+      cameras.firstWhere((c) => c.lensDirection == CameraLensDirection.front),
+      ResolutionPreset.low, // Basse résolution pour plus de rapidité
       enableAudio: false,
     );
-
     await cameraController!.initialize();
     notifyListeners();
   }
 
-  void startVerification() {
-    status = FaceVerificationStatus.scanning;
-    message = 'Clignez des yeux ou tournez la tête';
+  void startVerification(BuildContext context) {
+    status = FaceStatus.scanning;
+    message = 'Scanning face...';
     notifyListeners();
 
     cameraController?.startImageStream((image) async {
       if (_isProcessing) return;
       _isProcessing = true;
 
-      final inputImage = _convertCameraImage(image);
-      final faces =
-      await service.detector.processImage(inputImage);
+      try {
+        final inputImage = _convertCameraImage(image);
+        final faces = await service.detector.processImage(inputImage);
 
-      final isHuman = await service.verifyLiveness(faces);
+        // CONDITION SIMPLE : Si un visage est détecté
+        if (faces.isNotEmpty) {
+          status = FaceStatus.success;
+          message = 'Face Detected!';
+          notifyListeners();
 
-      if (isHuman) {
-        status = FaceVerificationStatus.success;
-        message = 'Vérification réussie';
-        await cameraController?.stopImageStream();
-      }
+          await cameraController?.stopImageStream();
 
-      _isProcessing = false;
-      notifyListeners();
-    });
-
-    Timer(const Duration(seconds: 15), () {
-      if (status == FaceVerificationStatus.scanning) {
-        attempts++;
-        status = FaceVerificationStatus.failed;
-        message = 'Échec de la vérification';
-        cameraController?.stopImageStream();
-        notifyListeners();
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, '/Login');
+          }
+        }
+      } catch (e) {
+        debugPrint("Error: $e");
+      } finally {
+        _isProcessing = false;
       }
     });
-  }
-
-  void retry() {
-    if (attempts >= maxAttempts) return;
-    status = FaceVerificationStatus.idle;
-    message = 'Réessayez la vérification';
-    notifyListeners();
   }
 
   InputImage _convertCameraImage(CameraImage image) {
@@ -87,14 +65,13 @@ class FaceVerificationController extends ChangeNotifier {
     for (final plane in image.planes) {
       buffer.putUint8List(plane.bytes);
     }
-
     final bytes = buffer.done().buffer.asUint8List();
 
     return InputImage.fromBytes(
       bytes: bytes,
       metadata: InputImageMetadata(
         size: Size(image.width.toDouble(), image.height.toDouble()),
-        rotation: InputImageRotation.rotation0deg,
+        rotation: InputImageRotation.rotation270deg,
         format: InputImageFormat.nv21,
         bytesPerRow: image.planes.first.bytesPerRow,
       ),
