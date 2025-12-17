@@ -1,0 +1,20 @@
+import 'package:flutter/material.dart';
+
+import '../../layout/drawer.dart';
+
+class SeetingScreen extends StatelessWidget {
+  const SeetingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+      drawer:  AppDrawer(),
+      appBar: AppBar(
+        title:  Text('CRM MEDICAL'),
+      ),
+      body:  Center(
+        child: Text('Seeting Screen',style: TextStyle(fontSize: 50),),
+      ),
+    );
+  }
+}

@@ -1,6 +1,8 @@
 import 'package:app_examen/CRM%20Medical/modules/Doctor/doctor_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/Home/home_screen.dart';
+import 'package:app_examen/CRM%20Medical/modules/Meeting/meeting_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/medication/medication_screen.dart';
+import 'package:app_examen/CRM%20Medical/modules/seetings/seeting_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,8 @@ class MyApp extends StatelessWidget {
     '/home':(context) => HomeScreen(),
     '/login':(context) => LoginScreen(),
     '/doctors':(context) => DoctorScreen(),
+    '/meeting':(context) => MeetingScreen(),
+    '/seetings':(context) => SeetingScreen(),
   };
   @override
   Widget build(BuildContext context) {

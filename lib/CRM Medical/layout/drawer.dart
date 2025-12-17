@@ -59,9 +59,15 @@ class AppDrawer extends StatelessWidget {
           ),
           drawerItem(
             context,
+            title: 'Meeting', // Nouvel item pour les RDV
+            icon: Icons.calendar_today,
+            route: "/meeting",
+          ),
+          drawerItem(
+            context,
             title: 'Settings',
             icon: Icons.settings_outlined,
-            route: '/settings',
+            route: '/seetings',
           ),
           ListTile(
             title: const Text('Déconnexion', style: TextStyle(fontSize: 18)),
