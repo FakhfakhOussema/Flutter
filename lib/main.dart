@@ -8,71 +8,52 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'CRM Medical/modules/login/login_screen.dart';
+import 'CRM Medical/modules/MLKit/face_verification/face_verification_screen.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp( MyApp());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
+  MyApp({super.key});
 
-  final routes={
-    '/Medication':(context) => MedicationScreen(),
-    '/home':(context) => HomeScreen(),
-    '/Login':(context) => LoginScreen(),
-    '/doctors':(context) => DoctorScreen(),
-    '/meeting':(context) => MeetingScreen(),
-    '/Seetings':(context) => SeetingScreen(),
+  final routes = {
+    '/Medication': (context) => MedicationScreen(),
+    '/home': (context) => HomeScreen(),
+    '/Login': (context) => LoginScreen(),
+    '/doctors': (context) => DoctorScreen(),
+    '/meeting': (context) => MeetingScreen(),
+    '/Seetings': (context) => SeetingScreen(),
+    '/faceVerification': (context) => const FaceVerificationScreen(),
   };
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      routes: routes,
       title: "CRM App",
-      home: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          // Firebase est en cours d'initialisation
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      routes: routes,
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, authSnapshot) {
+          if (authSnapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
 
-          // Si erreur lors de l'initialisation
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                child: Text(
-                  'Erreur lors de l\'initialisation de Firebase',
-                  style: TextStyle(fontSize: 18, color: Colors.red),
-                ),
-              ),
-            );
+          if (authSnapshot.hasData) {
+            // L'utilisateur est déjà connecté
+            return HomeScreen();
+          } else {
+            // Pas connecté -> vérifier si c'est une personne réelle
+            return const FaceVerificationScreen();
           }
-
-          // Firebase initialisé, vérifier l'état de l'utilisateur
-          return StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, authSnapshot) {
-              if (authSnapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              if (authSnapshot.hasData) {
-                return HomeScreen();
-              } else {
-                return LoginScreen();
-              }
-            },
-          );
         },
       ),
     );
