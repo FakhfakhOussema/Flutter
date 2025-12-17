@@ -1,5 +1,6 @@
 import 'package:app_examen/CRM%20Medical/shared/components/components.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -81,8 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 text: 'Log In',
                 function: () {
                   if (formKey.currentState!.validate()) {
-                    print('Email: ${loginController.text}');
-                    print('Password: ${passwordController.text}');
+                      _onAuthentifier(context);
                   }
                 },
               ),
@@ -110,4 +110,55 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Future<void> _onAuthentifier(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: loginController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        "/home",
+            (route) => false,
+      );
+
+    } on FirebaseAuthException catch (e) {
+      String message;
+
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'Email or password is incorrect';
+          break;
+
+        case 'wrong-password':
+          message = 'Email or password is incorrect';
+          break;
+
+        case 'invalid-email':
+          message = 'Invalid email address';
+          break;
+
+        case 'user-disabled':
+          message = 'This account has been disabled';
+          break;
+
+        case 'too-many-requests':
+          message = 'Too many attempts. Try again later';
+          break;
+
+        default:
+          message = 'Authentication failed. Please try again';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+
 }

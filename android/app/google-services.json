@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "480869520638",
+    "project_id": "crm-medical-1a51f",
+    "storage_bucket": "crm-medical-1a51f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480869520638:android:60cb89fc1eba676aa6c1af",
+        "android_client_info": {
+          "package_name": "com.example.app_examen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPWZyvGrzVVQo56_0-FVZuJuBJZauS2KI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
