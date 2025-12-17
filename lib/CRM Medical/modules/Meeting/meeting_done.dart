@@ -1,19 +1,19 @@
-import 'package:app_examen/CRM%20Medical/modules/Meeting/meeting_done.dart';
 import 'package:app_examen/CRM%20Medical/modules/Meeting/meeting_screen.dart';
 import 'package:flutter/material.dart';
 import '../../layout/appBar.dart';
 import '../../layout/bottomNavBar.dart';
 import '../../layout/drawer.dart';
+import 'meeting_archived.dart';
 
-class MeetingArchived extends StatefulWidget {
-  const MeetingArchived({super.key});
+class MeetingDone extends StatefulWidget {
+  const MeetingDone({super.key});
 
   @override
-  State<MeetingArchived> createState() => _MeetingArchivedState();
+  State<MeetingDone> createState() => _MeetingDoneState();
 }
 
-class _MeetingArchivedState extends State<MeetingArchived> {
-  int _currentIndex = 2;
+class _MeetingDoneState extends State<MeetingDone> {
+  int _currentIndex = 1; // Completed
 
   void _onBottomNavTap(int index) {
     setState(() {
@@ -26,10 +26,10 @@ class _MeetingArchivedState extends State<MeetingArchived> {
         MaterialPageRoute(builder: (context) => MeetingScreen()),
       );
     }
-    if(index==1){
+    if(index==2){
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MeetingDone()),
+        MaterialPageRoute(builder: (context) => MeetingArchived()),
       );
     }
   }
@@ -38,10 +38,10 @@ class _MeetingArchivedState extends State<MeetingArchived> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(),
-      appBar: customAppBar(title: 'Archived Meetings'),
+      appBar: customAppBar(title: 'Completed Meetings'),
       body: const Center(
         child: Text(
-          'Meeting Archived',
+          'Meeting Done',
           style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
         ),
       ),
