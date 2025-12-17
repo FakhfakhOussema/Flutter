@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             print(passwordController.text);
                           }
                           },
-                        text: 'login',
+                        text: 'Login',
                     raduis: 6),
                 SizedBox(height: 20,),
                     defaultButton(

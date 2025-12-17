@@ -55,7 +55,7 @@ class AppDrawer extends StatelessWidget {
             context,
             title: 'Medication',
             icon: Icons.medication,
-            route: "/medication",
+            route: "/Medication",
           ),
           drawerItem(
             context,
@@ -67,7 +67,7 @@ class AppDrawer extends StatelessWidget {
             context,
             title: 'Settings',
             icon: Icons.settings_outlined,
-            route: '/seetings',
+            route: '/Seetings',
           ),
           ListTile(
             title: const Text('Déconnexion', style: TextStyle(fontSize: 18)),
@@ -77,7 +77,7 @@ class AppDrawer extends StatelessWidget {
               await FirebaseAuth.instance.signOut();
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                '/login',
+                '/Login',
                     (route) => false,
               );
             },

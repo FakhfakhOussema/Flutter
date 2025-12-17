@@ -19,12 +19,12 @@ class MyApp extends StatelessWidget {
    MyApp({super.key});
 
   final routes={
-    '/medication':(context) => MedicationScreen(),
+    '/Medication':(context) => MedicationScreen(),
     '/home':(context) => HomeScreen(),
-    '/login':(context) => LoginScreen(),
+    '/Login':(context) => LoginScreen(),
     '/doctors':(context) => DoctorScreen(),
     '/meeting':(context) => MeetingScreen(),
-    '/seetings':(context) => SeetingScreen(),
+    '/Seetings':(context) => SeetingScreen(),
   };
   @override
   Widget build(BuildContext context) {
