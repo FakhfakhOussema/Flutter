@@ -13,10 +13,8 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.lightBlue],
-              ),
+            decoration: BoxDecoration(
+              color: Colors.blue[700],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

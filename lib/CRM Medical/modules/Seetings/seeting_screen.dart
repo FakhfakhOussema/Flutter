@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../layout/appBar.dart';
 import '../../layout/drawer.dart';
 
 class SeetingScreen extends StatelessWidget {
@@ -9,9 +10,7 @@ class SeetingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Scaffold(
       drawer:  AppDrawer(),
-      appBar: AppBar(
-        title:  Text('CRM MEDICAL'),
-      ),
+      appBar: customAppBar(title: 'Seetings'),
       body:  Center(
         child: Text('Seeting Screen',style: TextStyle(fontSize: 50),),
       ),

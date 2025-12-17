@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../layout/appBar.dart';
 import '../../layout/drawer.dart';
 
 class MeetingScreen extends StatelessWidget {
@@ -7,13 +7,49 @@ class MeetingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       drawer: const AppDrawer(),
-      appBar: AppBar(
-        title: const Text('CRM MEDICAL'),
-      ),
+      appBar: customAppBar(title: 'Meetings'),
       body: const Center(
-        child: Text('Metting Screen',style: TextStyle(fontSize: 50),),
+        child: Text(
+          'Meeting Screen',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueAccent,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.blue[700],
+        child: const Icon(Icons.add, size: 30,color: Colors.white,),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: 0,
+        backgroundColor: Colors.blue[50],
+        selectedItemColor: Colors.blue[700],
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu),
+            label: 'Meetings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.check_circle_outline),
+            label: 'Completed',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.archive_outlined),
+            label: 'Archived',
+          ),
+        ],
       ),
     );
   }
