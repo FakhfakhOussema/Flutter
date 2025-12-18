@@ -22,7 +22,7 @@ class FaceVerificationController extends ChangeNotifier {
     final cameras = await availableCameras();
     cameraController = CameraController(
       cameras.firstWhere((c) => c.lensDirection == CameraLensDirection.front),
-      ResolutionPreset.medium,
+      ResolutionPreset.low,
       enableAudio: false,
     );
     await cameraController!.initialize();
