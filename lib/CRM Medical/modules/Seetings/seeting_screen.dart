@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../layout/appBar.dart';
 import '../../layout/drawer.dart';
 
@@ -15,6 +16,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: customAppBar(title: 'Settings'),
@@ -29,32 +32,33 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Compte utilisateur
+            /// ================== COMPTE ==================
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: ListTile(
                 leading: const CircleAvatar(
                   child: Icon(Icons.person),
                 ),
-                title: const Text('Nom utilisateur'),
-                subtitle: const Text('email@example.com'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    // Ajouter logique pour modifier le compte
-                  },
-                ),
+                title: Text(user?.displayName ?? 'Utilisateur'),
+                subtitle: Text(user?.email ?? 'email@example.com'),
+                trailing: const Icon(Icons.edit),
+                onTap: () {
+                  // Plus tard : modification profil
+                },
               ),
             ),
+
             const SizedBox(height: 20),
 
-            // Thème sombre
+            /// ================== MODE SOMBRE ==================
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: SwitchListTile(
                 title: const Text('Mode sombre'),
                 secondary: const Icon(Icons.dark_mode),
@@ -63,17 +67,19 @@ class _SettingScreenState extends State<SettingScreen> {
                   setState(() {
                     _darkMode = val;
                   });
-                  // Ajouter logique pour changer le thème global
+                  // TODO : appliquer thème global
                 },
               ),
             ),
+
             const SizedBox(height: 10),
 
-            // Notifications
+            /// ================== NOTIFICATIONS ==================
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: SwitchListTile(
                 title: const Text('Notifications'),
                 secondary: const Icon(Icons.notifications),
@@ -82,26 +88,34 @@ class _SettingScreenState extends State<SettingScreen> {
                   setState(() {
                     _notifications = val;
                   });
-                  // Ajouter logique pour activer/désactiver notifications
+                  // TODO : activer / désactiver notifications
                 },
               ),
             ),
-            const SizedBox(height: 20),
 
-            // Déconnexion
-            Center(
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+            const SizedBox(height: 30),
+
+            /// ================== DÉCONNEXION ==================
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                title: const Text(
+                  'Déconnexion',
+                  style: TextStyle(fontSize: 18),
                 ),
-                icon: const Icon(Icons.logout),
-                label: const Text('Déconnexion'),
-                onPressed: () {
-                  // Ajouter logique pour logout
+                leading: const Icon(Icons.logout, color: Colors.red),
+                trailing: const Icon(Icons.arrow_right, color: Colors.red),
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/Login',
+                        (route) => false,
+                  );
                 },
               ),
             ),

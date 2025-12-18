@@ -1,10 +1,11 @@
-import 'package:app_examen/CRM%20Medical/modules/Doctor/doctor_screen.dart';
-import 'package:app_examen/CRM%20Medical/modules/Home/home_screen.dart';
-import 'package:app_examen/CRM%20Medical/modules/Meeting/meeting_screen.dart';
-import 'package:app_examen/CRM%20Medical/modules/medication/medication_screen.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'CRM Medical/modules/Doctor/doctor_screen.dart';
+import 'CRM Medical/modules/Home/home_screen.dart';
+import 'CRM Medical/modules/Medication/medication_screen.dart';
+import 'CRM Medical/modules/Meeting/meeting_screen.dart';
 import 'CRM Medical/modules/Seetings/seeting_screen.dart';
 import 'CRM Medical/modules/login/login_screen.dart';
 import 'CRM Medical/modules/MLKit/face_verification/face_verification_screen.dart';
