@@ -61,7 +61,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                     value: _doctorController.text.isEmpty ? null : _doctorController.text,
                     items: items,
                     decoration: const InputDecoration(
-                      labelText: 'Nom du docteur',
+                      labelText: 'Doctor',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.person),
                     ),
@@ -76,28 +76,50 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
               const SizedBox(height: 20),
 
-              /// DATE (TextField cliquable)
+              /// DATE + HEURE (TextField cliquable)
               GestureDetector(
                 onTap: () async {
-                  DateTime? picked = await showDatePicker(
+                  // 1️⃣ Sélection de la date
+                  DateTime? pickedDate = await showDatePicker(
                     context: context,
                     initialDate: _selectedDate ?? DateTime.now(),
                     firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
                   );
-                  if (picked != null) {
-                    setState(() {
-                      _selectedDate = picked;
-                      _dateController.text =
-                      '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
-                    });
+
+                  if (pickedDate != null) {
+                    // 2️⃣ Sélection de l'heure
+                    TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+
+                    if (pickedTime != null) {
+                      setState(() {
+                        _selectedDate = DateTime(
+                          pickedDate.year,
+                          pickedDate.month,
+                          pickedDate.day,
+                          pickedTime.hour,
+                          pickedTime.minute,
+                        );
+
+                        // Affichage date + heure dans le TextField
+                        _dateController.text =
+                        '${pickedDate.day.toString().padLeft(2, '0')}/'
+                            '${pickedDate.month.toString().padLeft(2, '0')}/'
+                            '${pickedDate.year} '
+                            '${pickedTime.hour.toString().padLeft(2, '0')}:'
+                            '${pickedTime.minute.toString().padLeft(2, '0')}';
+                      });
+                    }
                   }
                 },
                 child: AbsorbPointer(
                   child: TextField(
                     controller: _dateController,
                     decoration: const InputDecoration(
-                      labelText: 'Date prévue',
+                      labelText: 'Date et heure prévues',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.calendar_today),
                     ),
@@ -110,37 +132,66 @@ class _MeetingScreenState extends State<MeetingScreen> {
               /// SAVE
               ElevatedButton(
                 onPressed: () async {
-                  if (_doctorController.text.isEmpty || _selectedDate == null) {
+                  // Vérification que tous les champs sont remplis
+                  if (_doctorController.text.trim().isEmpty || _selectedDate == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Veuillez remplir tous les champs')),
+                      const SnackBar(
+                        content: Text('Veuillez remplir tous les champs'),
+                        backgroundColor: Colors.red,
+                      ),
                     );
                     return;
                   }
 
-                  await FirebaseFirestore.instance.collection('meetings').add({
-                    'doctor': _doctorController.text.trim(),
-                    'date': Timestamp.fromDate(_selectedDate!),
-                    'status': 0,
-                  });
+                  try {
+                    // Ajout du rendez-vous dans Firestore
+                    await FirebaseFirestore.instance.collection('meetings').add({
+                      'doctor': _doctorController.text.trim(),
+                      'date': Timestamp.fromDate(_selectedDate!),
+                      'status': 0, // statut : programmé
+                    });
 
-                  Navigator.pop(context);
+                    // Fermeture du modal
+                    Navigator.pop(context);
 
-                  _doctorController.clear();
-                  _dateController.clear();
-                  setState(() => _selectedDate = null);
+                    // Réinitialisation des champs
+                    _doctorController.clear();
+                    _dateController.clear();
+                    setState(() => _selectedDate = null);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Rendez-vous ajouté avec succès'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erreur lors de l\'ajout : $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  backgroundColor: Colors.blue[700],
                 ),
-                child: const Text('Ajouter', style: TextStyle(fontSize: 16)),
-              ),
+                child: const Text(
+                  'Ajouter',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              )
+
             ],
           ),
         );
       },
     );
   }
+
 
 
   /// BOTTOM NAVIGATION
@@ -209,8 +260,13 @@ class _MeetingScreenState extends State<MeetingScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    '${date.day}/${date.month}/${date.year}',
+                    '${date.day.toString().padLeft(2, '0')}/'
+                        '${date.month.toString().padLeft(2, '0')}/'
+                        '${date.year} à '
+                        '${date.hour.toString().padLeft(2, '0')}:'
+                        '${date.minute.toString().padLeft(2, '0')}',
                   ),
+
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

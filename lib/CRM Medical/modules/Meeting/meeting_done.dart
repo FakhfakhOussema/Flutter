@@ -78,7 +78,11 @@ class _MeetingDoneState extends State<MeetingDone> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    'Date : ${date.day}/${date.month}/${date.year}',
+                    '${date.day.toString().padLeft(2, '0')}/'
+                        '${date.month.toString().padLeft(2, '0')}/'
+                        '${date.year} à '
+                        '${date.hour.toString().padLeft(2, '0')}:'
+                        '${date.minute.toString().padLeft(2, '0')}',
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.archive, color: Colors.grey),

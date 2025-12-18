@@ -185,13 +185,11 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Liste des derniers meetings (status = 0 ou active)
+// Liste des derniers meetings (status = 0 ou active)
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('meetings')
-                  .where('status', isEqualTo: 0)
-                  .orderBy('date', descending: true)
-                  .limit(5)
+                  .limit(3) // <-- ici on limite à 3
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {

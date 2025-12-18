@@ -82,7 +82,11 @@ class _MeetingArchivedState extends State<MeetingArchived> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    'Date : ${date.day}/${date.month}/${date.year}',
+                    '${date.day.toString().padLeft(2, '0')}/'
+                        '${date.month.toString().padLeft(2, '0')}/'
+                        '${date.year} à '
+                        '${date.hour.toString().padLeft(2, '0')}:'
+                        '${date.minute.toString().padLeft(2, '0')}',
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,

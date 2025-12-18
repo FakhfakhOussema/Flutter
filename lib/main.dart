@@ -2,10 +2,10 @@ import 'package:app_examen/CRM%20Medical/modules/Doctor/doctor_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/Home/home_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/Meeting/meeting_screen.dart';
 import 'package:app_examen/CRM%20Medical/modules/medication/medication_screen.dart';
-import 'package:app_examen/CRM%20Medical/modules/seetings/seeting_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'CRM Medical/modules/Seetings/seeting_screen.dart';
 import 'CRM Medical/modules/login/login_screen.dart';
 import 'CRM Medical/modules/MLKit/face_verification/face_verification_screen.dart';
 import 'firebase_options.dart';
@@ -15,19 +15,21 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  final routes = {
+  // Définition des routes
+  final Map<String, WidgetBuilder> routes = {
     '/Medication': (context) => MedicationScreen(),
     '/home': (context) => HomeScreen(),
     '/Login': (context) => LoginScreen(),
     '/doctors': (context) => DoctorScreen(),
     '/meeting': (context) => MeetingScreen(),
-    '/Seetings': (context) => SeetingScreen(),
+    '/Seetings': (context) => SettingScreen(),
     '/faceVerification': (context) => const FaceVerificationScreen(),
   };
 
@@ -37,17 +39,26 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "CRM App",
       routes: routes,
-      //home: HomeScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+      ),
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, authSnapshot) {
+          // Loading screen pendant la vérification
           if (authSnapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
+
+          // Si l'utilisateur est connecté
           if (authSnapshot.hasData) {
-            return HomeScreen(); // Déjà connecté
+            return HomeScreen();
           } else {
-            return const FaceVerificationScreen(); // Doit prouver qu'il est humain
+            // Sinon redirection vers la vérification faciale
+            return const FaceVerificationScreen();
           }
         },
       ),
