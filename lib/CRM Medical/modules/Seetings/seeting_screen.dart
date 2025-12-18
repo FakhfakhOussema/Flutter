@@ -37,7 +37,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 leading: const CircleAvatar(
                   child: Icon(Icons.person),
                 ),
-                title: Text(user?.displayName ?? 'Utilisateur'),
+                title: Text(user?.displayName ?? 'USER'),
                 subtitle: Text(user?.email ?? 'email@example.com'),
                 trailing: const Icon(Icons.edit),
                 onTap: () {
@@ -54,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: SwitchListTile(
-                title: const Text('Mode sombre'),
+                title: const Text('Dark mode'),
                 secondary: const Icon(Icons.dark_mode),
                 value: _darkMode,
                 onChanged: (val) {
@@ -67,7 +67,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
             const SizedBox(height: 10),
 
-            /// ================== NOTIFICATIONS ==================
+            // Notification
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -94,7 +94,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               child: ListTile(
                 title: const Text(
-                  'Déconnexion',
+                  'Logout',
                   style: TextStyle(fontSize: 18),
                 ),
                 leading: const Icon(Icons.logout, color: Colors.red),

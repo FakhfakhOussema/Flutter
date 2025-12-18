@@ -26,7 +26,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  user?.email ?? 'Utilisateur',
+                  user?.email ?? 'USER',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -68,7 +68,7 @@ class AppDrawer extends StatelessWidget {
             route: '/Seetings',
           ),
           ListTile(
-            title: const Text('Déconnexion', style: TextStyle(fontSize: 18)),
+            title: const Text('Logout', style: TextStyle(fontSize: 18)),
             leading: const Icon(Icons.logout, color: Colors.blue),
             trailing: const Icon(Icons.arrow_right, color: Colors.blue),
             onTap: () async {

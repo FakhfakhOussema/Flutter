@@ -35,10 +35,13 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Welcome',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            Center(
+              child: const Text(
+                'WELCOME',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
             ),
+
             const SizedBox(height: 6),
             const Text(
               'Easily manage your medical appointments',
