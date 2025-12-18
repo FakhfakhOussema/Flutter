@@ -85,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Login button
                     defaultButton(
+                      raduis: 7,
                       text: 'Log In',
                       function: () {
                         if (formKey.currentState!.validate()) {
@@ -95,21 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     defaultSizedBox(),
 
                     // Forget password
-                    Row(
-                      children: [
-                        const Expanded(child: Divider(thickness: 1)),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: defaultTextButton(
-                            text: 'Forget your password',
-                            onPressed: () {
-                              print('Forget password clicked');
-                            },
-                          ),
-                        ),
-                        const Expanded(child: Divider(thickness: 1)),
-                      ],
-                    ),
                   ],
                 ),
               ),

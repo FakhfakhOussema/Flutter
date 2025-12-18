@@ -26,10 +26,6 @@ class _SettingScreenState extends State<SettingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Paramètres',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 20),
 
             /// ================== COMPTE ==================
