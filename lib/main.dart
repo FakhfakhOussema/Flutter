@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'CRM Medical/modules/Seetings/seeting_screen.dart';
 import 'CRM Medical/modules/login/login_screen.dart';
 import 'CRM Medical/modules/MLKit/face_verification/face_verification_screen.dart';
+import 'CRM Medical/modules/notification/notification_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -15,7 +16,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await NotificationService.init();
   runApp(MyApp());
 }
 

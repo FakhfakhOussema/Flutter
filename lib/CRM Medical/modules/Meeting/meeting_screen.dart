@@ -5,6 +5,7 @@ import '../../layout/drawer.dart';
 import '../../layout/bottomNavBar.dart';
 import 'meeting_archived.dart';
 import 'meeting_done.dart';
+import '../notification/meeting_notification_service.dart';
 
 class MeetingScreen extends StatefulWidget {
   const MeetingScreen({super.key});
@@ -15,11 +16,23 @@ class MeetingScreen extends StatefulWidget {
 
 class _MeetingScreenState extends State<MeetingScreen> {
   final TextEditingController _doctorController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   DateTime? _selectedDate;
 
   int _currentIndex = 0;
 
+  /// BOUTON BOTTOM NAVIGATION
+  void _onBottomNavTap(int index) {
+    setState(() => _currentIndex = index);
+    if (index == 1) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const MeetingDone()));
+    }
+    if (index == 2) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const MeetingArchived()));
+    }
+  }
+
+  /// MODAL D’AJOUT D’UN MEETING
   void _showAddMeetingModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -38,25 +51,20 @@ class _MeetingScreenState extends State<MeetingScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Ajouter un rendez-vous',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              const Text('Ajouter un rendez-vous', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
 
-              /// DOCTOR (Dropdown à partir de la collection doctors)
+              /// DOCTOR (Dropdown à partir de Firestore)
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const CircularProgressIndicator();
-
                   List<DropdownMenuItem<String>> items = snapshot.data!.docs.map((doc) {
                     return DropdownMenuItem<String>(
                       value: doc['name'],
                       child: Text(doc['name']),
                     );
                   }).toList();
-
                   return DropdownButtonFormField<String>(
                     value: _doctorController.text.isEmpty ? null : _doctorController.text,
                     items: items,
@@ -73,27 +81,22 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   );
                 },
               ),
-
               const SizedBox(height: 20),
 
-              /// DATE + HEURE (TextField cliquable)
+              /// DATE + HEURE
               GestureDetector(
                 onTap: () async {
-                  // 1️⃣ Sélection de la date
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
                     initialDate: _selectedDate ?? DateTime.now(),
                     firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
                   );
-
                   if (pickedDate != null) {
-                    // 2️⃣ Sélection de l'heure
                     TimeOfDay? pickedTime = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.now(),
                     );
-
                     if (pickedTime != null) {
                       setState(() {
                         _selectedDate = DateTime(
@@ -103,8 +106,6 @@ class _MeetingScreenState extends State<MeetingScreen> {
                           pickedTime.hour,
                           pickedTime.minute,
                         );
-
-                        // Affichage date + heure dans le TextField
                         _dateController.text =
                         '${pickedDate.day.toString().padLeft(2, '0')}/'
                             '${pickedDate.month.toString().padLeft(2, '0')}/'
@@ -126,13 +127,11 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
 
-              /// SAVE
+              /// BOUTON AJOUTER
               ElevatedButton(
                 onPressed: () async {
-                  // Vérification que tous les champs sont remplis
                   if (_doctorController.text.trim().isEmpty || _selectedDate == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -142,23 +141,16 @@ class _MeetingScreenState extends State<MeetingScreen> {
                     );
                     return;
                   }
-
                   try {
-                    // Ajout du rendez-vous dans Firestore
                     await FirebaseFirestore.instance.collection('meetings').add({
                       'doctor': _doctorController.text.trim(),
                       'date': Timestamp.fromDate(_selectedDate!),
-                      'status': 0, // statut : programmé
+                      'status': 0,
                     });
-
-                    // Fermeture du modal
                     Navigator.pop(context);
-
-                    // Réinitialisation des champs
                     _doctorController.clear();
                     _dateController.clear();
                     setState(() => _selectedDate = null);
-
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Appointment added successfully'),
@@ -179,12 +171,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   backgroundColor: Colors.blue[700],
                 ),
-                child: const Text(
-                  'Add',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                child: const Text('Add', style: TextStyle(fontSize: 16, color: Colors.white)),
               )
-
             ],
           ),
         );
@@ -192,29 +180,10 @@ class _MeetingScreenState extends State<MeetingScreen> {
     );
   }
 
-
-
-  /// BOTTOM NAVIGATION
-  void _onBottomNavTap(int index) {
-    setState(() => _currentIndex = index);
-
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const MeetingDone()),
-      );
-    }
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const MeetingArchived()),
-      );
-    }
-  }
-
   @override
   void dispose() {
     _doctorController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
@@ -223,11 +192,9 @@ class _MeetingScreenState extends State<MeetingScreen> {
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: customAppBar(title: 'Meetings'),
+
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('meetings')
-            .where('status', isEqualTo: 0)
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('meetings').where('status', isEqualTo: 0).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -235,57 +202,44 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
-              child: Text(
-                'No Appointments',
-                style: TextStyle(fontSize: 18),
-              ),
+              child: Text('No Appointments', style: TextStyle(fontSize: 18)),
             );
           }
+
+          // Notifications + vibration pour meetings < 1 min
+          MeetingNotificationService.checkMeetings(snapshot.data!);
 
           return ListView(
             padding: const EdgeInsets.all(16),
             children: snapshot.data!.docs.map((doc) {
               final Timestamp ts = doc['date'];
               final DateTime date = ts.toDate();
-
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   leading: const Icon(Icons.medical_services, color: Colors.blue),
-                  title: Text(
-                    doc['doctor'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  title: Text(doc['doctor'], style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
                     '${date.day.toString().padLeft(2, '0')}/'
                         '${date.month.toString().padLeft(2, '0')}/'
-                        '${date.year} à '
+                        '${date.year} '
                         '${date.hour.toString().padLeft(2, '0')}:'
                         '${date.minute.toString().padLeft(2, '0')}',
                   ),
-
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.check, color: Colors.green),
                         onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('meetings')
-                              .doc(doc.id)
-                              .update({'status': 1});
+                          FirebaseFirestore.instance.collection('meetings').doc(doc.id).update({'status': 1});
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.archive, color: Colors.grey),
                         onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('meetings')
-                              .doc(doc.id)
-                              .update({'status': 2});
+                          FirebaseFirestore.instance.collection('meetings').doc(doc.id).update({'status': 2});
                         },
                       ),
                     ],
@@ -296,7 +250,6 @@ class _MeetingScreenState extends State<MeetingScreen> {
           );
         },
       ),
-
 
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddMeetingModal(context),
