@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../layout/appBar.dart';
 import '../../layout/drawer.dart';
 import '../MLKit/barcode_scanning/barcode_scanning_view.dart';
+import 'package:vibration/vibration.dart';
 
 class MedicationScreen extends StatefulWidget {
   const MedicationScreen({super.key});
@@ -16,6 +17,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+  /// Modal pour ajouter un médicament
   void _showAddMedicationModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -51,10 +53,9 @@ class _MedicationScreenState extends State<MedicationScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Code-barres
+              // Code-barres (manuel ou scan)
               TextField(
                 controller: _barcodeController,
-                readOnly: true,
                 decoration: InputDecoration(
                   labelText: 'Code-barres',
                   border: const OutlineInputBorder(),
@@ -70,6 +71,9 @@ class _MedicationScreenState extends State<MedicationScreen> {
                         setState(() {
                           _barcodeController.text = barcode;
                         });
+                        if (await Vibration.hasVibrator() ?? false) {
+                          Vibration.vibrate(duration: 200); // vibration 200ms
+                        }
                       }
                     },
                   ),
@@ -145,6 +149,12 @@ class _MedicationScreenState extends State<MedicationScreen> {
 
       if (snapshot.docs.isNotEmpty) {
         final doc = snapshot.docs.first;
+
+        // Vibration courte à chaque scan réussi
+        if (await Vibration.hasVibrator() ?? false) {
+          Vibration.vibrate(duration: 200); // vibration 200ms
+        }
+
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -237,8 +247,8 @@ class _MedicationScreenState extends State<MedicationScreen> {
             heroTag: 'add',
             onPressed: () => _showAddMedicationModal(context),
             backgroundColor: Colors.green,
-            child: const Icon(Icons.add, color: Colors.white),
             tooltip: 'Ajouter un médicament',
+            child: const Icon(Icons.add, color: Colors.white),
           ),
           const SizedBox(height: 12),
           FloatingActionButton(
