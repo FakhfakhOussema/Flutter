@@ -188,7 +188,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(),
-      appBar: customAppBar(title: 'Médicaments'),
+      appBar: customAppBar(title: 'Medications'),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('medications')
@@ -230,9 +230,45 @@ class _MedicationScreenState extends State<MedicationScreen> {
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
-                      FirebaseFirestore.instance.collection('medications').doc(doc.id).delete();
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirmation'),
+                          content: const Text(
+                            'Do you really want to delete this medication?',
+                          ),
+                          actions: [
+                            TextButton(
+                              child: const Text('Cancel'),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              child: const Text('Delete'),
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('medications')
+                                    .doc(doc.id)
+                                    .delete();
+
+                                Navigator.pop(context);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Medication deleted successfully'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
+
                 ),
               );
             }).toList(),
