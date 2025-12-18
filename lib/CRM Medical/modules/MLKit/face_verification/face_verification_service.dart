@@ -3,7 +3,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 class FaceVerificationService {
   final FaceDetector _faceDetector = FaceDetector(
     options: FaceDetectorOptions(
-      performanceMode: FaceDetectorMode.fast, // Mode ultra-rapide
+      performanceMode: FaceDetectorMode.fast,
     ),
   );
 

@@ -133,7 +133,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
     );
   }
 
-  /// Scanner un code QR pour rechercher un médicament
+  // Scanner un code QR pour rechercher un médicament
   void _searchMedicationByBarcode() async {
     final barcode = await Navigator.push(
       context,

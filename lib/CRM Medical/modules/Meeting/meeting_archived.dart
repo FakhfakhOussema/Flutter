@@ -106,25 +106,25 @@ class _MeetingArchivedState extends State<MeetingArchived> {
                       // DELETE
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        tooltip: 'Supprimer',
+                        tooltip: 'Delete',
                         onPressed: () {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('Confirmation'),
                               content: const Text(
-                                'Voulez-vous vraiment supprimer ce rendez-vous ?',
+                                'Do you really want to delete this appointment?',
                               ),
                               actions: [
                                 TextButton(
-                                  child: const Text('Annuler'),
+                                  child: const Text('Cancel'),
                                   onPressed: () => Navigator.pop(context),
                                 ),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                   ),
-                                  child: const Text('Supprimer'),
+                                  child: const Text('Delete'),
                                   onPressed: () async {
                                     await FirebaseFirestore.instance
                                         .collection('meetings')

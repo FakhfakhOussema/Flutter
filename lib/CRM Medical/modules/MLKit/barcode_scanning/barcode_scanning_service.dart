@@ -7,7 +7,6 @@ class BarcodeService {
     final List<Barcode> barcodes = await _barcodeScanner.processImage(inputImage);
 
     if (barcodes.isNotEmpty) {
-      // Retourne la valeur texte du premier code-barres trouvé
       return barcodes.first.displayValue;
     }
     return null;

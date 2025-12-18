@@ -15,7 +15,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _specialtyController = TextEditingController();
 
-  /// Modal pour ajouter un doctor
+  // Modal pour ajouter un doctor
   void _showAddDoctorModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -135,9 +135,41 @@ class _DoctorScreenState extends State<DoctorScreen> {
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
-                    FirebaseFirestore.instance.collection('doctors').doc(doc.id).delete();
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirmation'),
+                        content: const Text('Do you really want to delete this doctor?'),
+                        actions: [
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: const Text('Delete'),
+                            onPressed: () async {
+                              await FirebaseFirestore.instance
+                                  .collection('doctors')
+                                  .doc(doc.id)
+                                  .delete();
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Doctor deleted successfully'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
+
               ),
             );
           },

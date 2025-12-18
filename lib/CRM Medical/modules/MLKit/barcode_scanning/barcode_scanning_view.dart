@@ -36,7 +36,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
 
       if (barcode != null && mounted) {
         _controller!.stopImageStream();
-        Navigator.pop(context, barcode); // Retourne le code à la page précédente
+        Navigator.pop(context, barcode);
       }
       _isScanning = false;
     });
@@ -52,7 +52,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
       bytes: buffer.done().buffer.asUint8List(),
       metadata: InputImageMetadata(
         size: Size(image.width.toDouble(), image.height.toDouble()),
-        rotation: InputImageRotation.rotation90deg, // Rotation normale pour caméra arrière
+        rotation: InputImageRotation.rotation90deg,
         format: InputImageFormat.nv21,
         bytesPerRow: image.planes.first.bytesPerRow,
       ),
@@ -76,7 +76,6 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
       body: Stack(
         children: [
           CameraPreview(_controller!),
-          // Overlay visuel pour aider le scan
           Center(
             child: Container(
               width: 250,

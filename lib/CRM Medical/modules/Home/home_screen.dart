@@ -9,7 +9,7 @@ import '../Meeting/meeting_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  /// Compter les documents d'une collection ou avec filtre
+  // Compter les documents d'une collection ou avec filtre
   Stream<int>? _countDocuments(String collection, {Map<String, dynamic>? where}) {
     Stream<QuerySnapshot>? stream;
     if (where != null) {

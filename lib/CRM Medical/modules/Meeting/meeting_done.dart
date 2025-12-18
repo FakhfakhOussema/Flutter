@@ -54,7 +54,7 @@ class _MeetingDoneState extends State<MeetingDone> {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Text(
-                'Aucun rendez-vous terminé',
+                'No completed appointments',
                 style: TextStyle(fontSize: 18),
               ),
             );

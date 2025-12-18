@@ -13,7 +13,6 @@ class MeetingNotificationService {
       final DateTime meetingDate = ts.toDate();
       final int diffSeconds = meetingDate.difference(now).inSeconds;
 
-      // Condition : moins d'1 minute
       if (diffSeconds > 0 &&
           diffSeconds <= 60 &&
           !_alreadyNotified.contains(doc.id)) {

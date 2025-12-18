@@ -22,14 +22,14 @@ class FaceVerificationController extends ChangeNotifier {
     final cameras = await availableCameras();
     cameraController = CameraController(
       cameras.firstWhere((c) => c.lensDirection == CameraLensDirection.front),
-      ResolutionPreset.low, // Basse résolution pour rapidité
+      ResolutionPreset.medium,
       enableAudio: false,
     );
     await cameraController!.initialize();
     notifyListeners();
   }
 
-  /// Démarre la détection faciale avec animation de progression
+  // Démarre la détection faciale avec animation de progression
   void startVerification(BuildContext context) async {
     if (status != FaceStatus.idle) return;
 

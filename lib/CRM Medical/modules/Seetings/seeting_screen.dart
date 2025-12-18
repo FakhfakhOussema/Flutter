@@ -28,7 +28,6 @@ class _SettingScreenState extends State<SettingScreen> {
           children: [
             const SizedBox(height: 20),
 
-            /// ================== COMPTE ==================
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -49,7 +48,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
             const SizedBox(height: 20),
 
-            /// ================== MODE SOMBRE ==================
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -63,7 +61,6 @@ class _SettingScreenState extends State<SettingScreen> {
                   setState(() {
                     _darkMode = val;
                   });
-                  // TODO : appliquer thème global
                 },
               ),
             ),
@@ -84,14 +81,12 @@ class _SettingScreenState extends State<SettingScreen> {
                   setState(() {
                     _notifications = val;
                   });
-                  // TODO : activer / désactiver notifications
                 },
               ),
             ),
 
             const SizedBox(height: 30),
 
-            /// ================== DÉCONNEXION ==================
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
