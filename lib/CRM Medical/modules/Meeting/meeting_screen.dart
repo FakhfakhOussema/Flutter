@@ -119,7 +119,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   child: TextField(
                     controller: _dateController,
                     decoration: const InputDecoration(
-                      labelText: 'Date et heure prévues',
+                      labelText: 'Scheduled Date and Time',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.calendar_today),
                     ),
@@ -136,7 +136,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   if (_doctorController.text.trim().isEmpty || _selectedDate == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Veuillez remplir tous les champs'),
+                        content: Text('Please fill in all fields'),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -161,7 +161,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Rendez-vous ajouté avec succès'),
+                        content: Text('Appointment added successfully'),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -180,7 +180,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   backgroundColor: Colors.blue[700],
                 ),
                 child: const Text(
-                  'Ajouter',
+                  'Add',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               )
@@ -236,7 +236,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Text(
-                'Aucun rendez-vous',
+                'No Appointments',
                 style: TextStyle(fontSize: 18),
               ),
             );

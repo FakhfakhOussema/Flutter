@@ -35,7 +35,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Ajouter un docteur',
+                'Add a Doctor',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -44,7 +44,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Nom du docteur',
+                  labelText: 'Doctor',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
@@ -55,7 +55,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
               TextField(
                 controller: _specialtyController,
                 decoration: const InputDecoration(
-                  labelText: 'Spécialité',
+                  labelText: 'Specialty',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.medical_services),
                 ),
@@ -66,7 +66,9 @@ class _DoctorScreenState extends State<DoctorScreen> {
                 onPressed: () async {
                   if (_nameController.text.isEmpty || _specialtyController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Veuillez remplir tous les champs')),
+                      const SnackBar(
+                        content: Text('Please fill in all the fields'),
+                      backgroundColor: Colors.red,),
                     );
                     return;
                   }
@@ -77,6 +79,12 @@ class _DoctorScreenState extends State<DoctorScreen> {
                     'specialty': _specialtyController.text.trim(),
                   });
 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Doctor added successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                   // Fermer le modal
                   Navigator.pop(context);
 
@@ -88,7 +96,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Ajouter'),
+                child: const Text('Add'),
               ),
             ],
           ),

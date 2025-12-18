@@ -35,7 +35,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Ajouter un médicament',
+                'Add a Medication',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -44,7 +44,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Nom du médicament',
+                  labelText: 'Medication Name',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.medical_services),
                 ),
@@ -82,7 +82,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
                 controller: _quantityController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Quantité',
+                  labelText: 'Quantity',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.numbers),
                 ),
@@ -93,7 +93,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
                 onPressed: () async {
                   if (_nameController.text.isEmpty || _quantityController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Veuillez remplir tous les champs')),
+                      const SnackBar(content: Text('Please fill out all the fields')),
                     );
                     return;
                   }
@@ -106,7 +106,12 @@ class _MedicationScreenState extends State<MedicationScreen> {
                   });
 
                   Navigator.pop(context);
-
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Medication added successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                   _nameController.clear();
                   _barcodeController.clear();
                   _quantityController.clear();
@@ -115,7 +120,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Ajouter', style: TextStyle(fontSize: 16)),
+                child: const Text('Add', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
@@ -144,18 +149,18 @@ class _MedicationScreenState extends State<MedicationScreen> {
           context: context,
           builder: (_) => AlertDialog(
             title: Text(doc['name']),
-            content: Text('Quantité : ${doc['quantity']}\nCode-barres : ${doc['barcode']}'),
+            content: Text('Quantity : ${doc['quantity']}\nCode-barres : ${doc['barcode']}'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Fermer'),
+                child: const Text('Close'),
               ),
             ],
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Médicament non trouvé')),
+          const SnackBar(content: Text('Medication not found')),
         );
       }
     }

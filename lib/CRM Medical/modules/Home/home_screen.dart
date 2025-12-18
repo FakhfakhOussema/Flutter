@@ -36,12 +36,12 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Bienvenue',
+              'Welcome',
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             const Text(
-              'Gérez facilement vos rendez-vous médicaux',
+              'Easily manage your medical appointments',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 25),
@@ -150,7 +150,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 25),
 
             const Text(
-              'Actions rapides',
+              'Quick actions',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -159,19 +159,19 @@ class HomeScreen extends StatelessWidget {
               children: [
                 _ActionButton(
                   icon: Icons.add,
-                  label: 'Nouveau RDV',
+                  label: 'New Appointment',
                   color: Colors.blue,
                   onTap: () => Navigator.pushNamed(context, '/meeting'),
                 ),
                 _ActionButton(
                   icon: Icons.person_add,
-                  label: 'Docteur',
+                  label: 'Doctor',
                   color: Colors.green,
                   onTap: () => Navigator.pushNamed(context, '/doctors'),
                 ),
                 _ActionButton(
                   icon: Icons.medication,
-                  label: 'Médicament',
+                  label: 'Medication',
                   color: Colors.orange,
                   onTap: () => Navigator.pushNamed(context, '/Medication'),
                 ),
@@ -180,7 +180,7 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 25),
             const Text(
-              'Derniers rendez-vous',
+              'Recent Appointments',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
